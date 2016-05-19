@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension version="2.5" type="plugin" group="vmpayment" method="upgrade">
+    <name>Komfortkasse</name>
+    <creationDate>April 26 2016</creationDate>
+    <author>Komfortkasse Team</author>
+    <authorUrl>http://komfortkasse.eu</authorUrl>
+    <copyright>Copyright (C) 2014-2016 Komfortkasse Team. All rights reserved.</copyright>
+    <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+    <version>1.5.0</version>
+    <description>Automatische Zuordnung von Zahlungen</description>
+    <languages>
+        <language tag="en-GB">language/en-GB/en-GB.plg_vmpayment_komfortkasse.ini</language>
+        <language tag="de-DE">language/de-DE/de-DE.plg_vmpayment_komfortkasse.ini</language>
+    </languages>
+    <files>
+        <filename plugin="komfortkasse">komfortkasse.php</filename>
+        <folder>language</folder>
+        <folder>komfortkasse</folder>
+        <folder>tmpl</folder>
+    </files>
+    <vmconfig>
+        <fields name="params">
+            <fieldset name="komfortkasse" addfieldpath="/plugins/vmpayment/komfortkasse/komfortkasse/fields">
+                <field name="KOMFORTKASSE_ACTIVATE_EXPORT" type="radio" default="1" label="KOMFORTKASSE_ACTIVATE_EXPORT_TITLE"
+                       description="KOMFORTKASSE_ACTIVATE_EXPORT_DESC">
+                    <option value="0">VMPAYMENT_KOMFORTKASSE_NO</option>
+                    <option value="1">VMPAYMENT_KOMFORTKASSE_YES</option>
+                </field>
+                <field name="KOMFORTKASSE_ACTIVATE_UPDATE" type="radio" default="1" label="KOMFORTKASSE_ACTIVATE_UPDATE_TITLE"
+                       description="KOMFORTKASSE_ACTIVATE_UPDATE_DESC">
+                    <option value="0">VMPAYMENT_KOMFORTKASSE_NO</option>
+                    <option value="1">VMPAYMENT_KOMFORTKASSE_YES</option>
+                </field>
+                <field type="paymentmethods" default="2" multiple="multiple" name="KOMFORTKASSE_PAYMENT_CODES" value="{$KOMFORTKASSE_PAYMENT_CODES}" label="KOMFORTKASSE_PAYMENT_CODES_TITLE" description="KOMFORTKASSE_PAYMENT_CODES_DESC" />
+                <field name="KOMFORTKASSE_STATUS_OPEN" multiple="multiple" type="vmorderstate" scope="com_virtuemart" default="U"
+                       label="KOMFORTKASSE_STATUS_OPEN_TITLE" description="KOMFORTKASSE_STATUS_OPEN_DESC"/>
+                <field name="KOMFORTKASSE_STATUS_PAID" type="vmorderstate" scope="com_virtuemart" default="C"
+                       label="KOMFORTKASSE_STATUS_PAID_TITLE" description="KOMFORTKASSE_STATUS_PAID_DESC"/>
+                <field name="KOMFORTKASSE_STATUS_CANCELLED" type="vmorderstate" scope="com_virtuemart" default="X"
+                       label="KOMFORTKASSE_STATUS_CANCELLED_TITLE" description="KOMFORTKASSE_STATUS_CANCELLED_DESC"/>
+                       
+                <field type="paymentmethods" default="3" multiple="multiple" name="KOMFORTKASSE_PAYMENT_CODES_INVOICE" value="{$KOMFORTKASSE_PAYMENT_CODES_INVOICE}" label="KOMFORTKASSE_PAYMENT_CODES_INVOICE_TITLE" description="KOMFORTKASSE_PAYMENT_CODES_INVOICE_DESC" />
+                <field name="KOMFORTKASSE_STATUS_OPEN_INVOICE" multiple="multiple" type="vmorderstate" scope="com_virtuemart" default="U"
+                       label="KOMFORTKASSE_STATUS_OPEN_INVOICE_TITLE" description="KOMFORTKASSE_STATUS_OPEN_INVOICE_DESC"/>
+                <field name="KOMFORTKASSE_STATUS_PAID_INVOICE" type="vmorderstate" scope="com_virtuemart" default="C"
+                       label="KOMFORTKASSE_STATUS_PAID_INVOICE_TITLE" description="KOMFORTKASSE_STATUS_PAID_INVOICE_DESC"/>
+                <field name="KOMFORTKASSE_STATUS_CANCELLED_INVOICE" type="vmorderstate" scope="com_virtuemart" default="D"
+                       label="KOMFORTKASSE_STATUS_CANCELLED_INVOICE_TITLE" description="KOMFORTKASSE_STATUS_CANCELLED_INVOICE_DESC"/>
+                       
+                <field type="paymentmethods" default="1" multiple="multiple" name="KOMFORTKASSE_PAYMENT_CODES_COD" value="{$KOMFORTKASSE_PAYMENT_CODES_COD}" label="KOMFORTKASSE_PAYMENT_CODES_COD_TITLE" description="KOMFORTKASSE_PAYMENT_CODES_COD_DESC" />
+                <field name="KOMFORTKASSE_STATUS_OPEN_COD" multiple="multiple" type="vmorderstate" scope="com_virtuemart" default="S"
+                       label="KOMFORTKASSE_STATUS_OPEN_COD_TITLE" description="KOMFORTKASSE_STATUS_OPEN_COD_DESC"/>
+                <field name="KOMFORTKASSE_STATUS_PAID_COD" type="vmorderstate" scope="com_virtuemart" default="C"
+                       label="KOMFORTKASSE_STATUS_PAID_COD_TITLE" description="KOMFORTKASSE_STATUS_PAID_COD_DESC"/>
+                <field name="KOMFORTKASSE_STATUS_CANCELLED_COD" type="vmorderstate" scope="com_virtuemart" default="X"
+                       label="KOMFORTKASSE_STATUS_CANCELLED_COD_TITLE" description="KOMFORTKASSE_STATUS_CANCELLED_COD_DESC"/>
+                       <field type="text" name="KOMFORTKASSE_ENCRYPTION" value="{$KOMFORTKASSE_ENCRYPTION}" default="" label="KOMFORTKASSE_ENCRYPTION_TITLE" description="KOMFORTKASSE_ENCRYPTION_DESC" />
+                       <field type="text" name="KOMFORTKASSE_ACCESSCODE" value="{$KOMFORTKASSE_ACCESSCODE}" default="" label="KOMFORTKASSE_ACCESSCODE_TITLE" description="KOMFORTKASSE_ACCESSCODE_DESC" />
+                       <field type="text" name="KOMFORTKASSE_APIKEY" value="{$KOMFORTKASSE_APIKEY}" default="" label="KOMFORTKASSE_APIKEY_TITLE" description="KOMFORTKASSE_APIKEY_DESC" />
+                       <field type="text" name="KOMFORTKASSE_PUBLICKEY" value="{$KOMFORTKASSE_PUBLICKEY}" default="" label="KOMFORTKASSE_PUBLICKEY_TITLE" description="KOMFORTKASSE_PUBLICKEY_DESC" />
+                       <field type="text" name="KOMFORTKASSE_PRIVATEKEY" value="{$KOMFORTKASSE_PRIVATEKEY}" default="" label="KOMFORTKASSE_PRIVATEKEY_TITLE" description="KOMFORTKASSE_PRIVATEKEY_DESC" />
+			</fieldset>
+		</fields>
+    </vmconfig>
+</extension>
