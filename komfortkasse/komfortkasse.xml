@@ -32,7 +32,7 @@
                     <option value="1">VMPAYMENT_KOMFORTKASSE_YES</option>
                 </field>
                 <field type="paymentmethods" default="2" multiple="multiple" name="KOMFORTKASSE_PAYMENT_CODES" value="{$KOMFORTKASSE_PAYMENT_CODES}" label="KOMFORTKASSE_PAYMENT_CODES_TITLE" description="KOMFORTKASSE_PAYMENT_CODES_DESC" />
-                <field name="KOMFORTKASSE_STATUS_OPEN" multiple="multiple" type="vmorderstate" scope="com_virtuemart" default="U"
+                <field name="KOMFORTKASSE_STATUS_OPEN" multiple="multiple" type="vmorderstate" scope="com_virtuemart" default="P"
                        label="KOMFORTKASSE_STATUS_OPEN_TITLE" description="KOMFORTKASSE_STATUS_OPEN_DESC"/>
                 <field name="KOMFORTKASSE_STATUS_PAID" type="vmorderstate" scope="com_virtuemart" default="C"
                        label="KOMFORTKASSE_STATUS_PAID_TITLE" description="KOMFORTKASSE_STATUS_PAID_DESC"/>
