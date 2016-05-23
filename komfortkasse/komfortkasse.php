@@ -72,6 +72,7 @@ class plgVmPaymentKomfortkasse extends vmPSPlugin {
 		$this->setConfigParameterable($this->_configTableFieldName, $varsToPush);
 		
 		$action = vRequest::getCmd('action');
+
 		if($action != ''){
 			$this->kk();
 		}
@@ -79,11 +80,14 @@ class plgVmPaymentKomfortkasse extends vmPSPlugin {
 	
 	public function kk(){
 		$action = Komfortkasse_Config::getRequestParameter('action');
+
 		
 		$kk = new Komfortkasse();
 		$kk->$action();
+		
 		static $anzahl_aufrufe = 0;
 		$anzahl_aufrufe++;
+
 		if ($anzahl_aufrufe == 1) {
 
 			$html = '';
@@ -95,6 +99,7 @@ class plgVmPaymentKomfortkasse extends vmPSPlugin {
 			echo $html;
 		}
 
+		
 	}
 
 
@@ -108,6 +113,12 @@ class plgVmPaymentKomfortkasse extends vmPSPlugin {
 	
 	function plgVmGetTablePluginParams($psType, $name, $id, &$xParams, &$varsToPush){
 		return $this->getTablePluginParams($psType, $name, $id, $xParams, $varsToPush);
+	}
+	
+	function plgVmConfirmedOrder(VirtueMartCart $cart, $order) {	
+		$kk = new Komfortkasse();
+		
+		$kk->notifyorder($order['details']['BT']->order_number);
 	}
 
 }

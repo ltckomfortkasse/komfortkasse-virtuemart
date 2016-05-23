@@ -367,6 +367,7 @@ class Komfortkasse
     private static function isOpen($order)
     {
         $status = '';
+
         switch ($order ['type']) {
             case 'PREPAYMENT' :
                 $status = Komfortkasse_Config::getConfig(Komfortkasse_Config::status_open, $order);
@@ -381,7 +382,7 @@ class Komfortkasse
                 return false;
         }
 
-        return in_array($order['status'], explode(',', $status));
+        return in_array($order['status'], explode(',', trim(str_replace('"', '', $status))));
     }
 
     /**
@@ -398,6 +399,7 @@ class Komfortkasse
         }
 
         $order = Komfortkasse_Order::getOrder($id);
+
         $order['type'] = self::getOrderType($order);
 
         // See if order is relevant.

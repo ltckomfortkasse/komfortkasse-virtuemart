@@ -185,9 +185,13 @@ class Komfortkasse_Order {
         $ret ['billing_postcode'] = $orderdetails['details']['BT']->zip;
         $ret ['billing_city'] = $orderdetails['details']['BT']->city;
         $ret ['billing_countrycode'] = $billingcountry;
+        $ret ['status'] = $orderdetails['details']['BT']->order_status;
 
 		for( $i= 0 ; $i < count($orderdetails['items']) ; $i++ ){
 			$ret['products'][] = $orderdetails['items'][$i]->order_item_sku ;
+			if($orderdetails['items'][$i]->order_item_sku = ''){
+				$ret['products'][] = $orderdetails['items'][$i]->order_item_name;
+			}
 		}
 
 		return $ret;
