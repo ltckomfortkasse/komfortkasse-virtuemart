@@ -4,8 +4,11 @@
  * Komfortkasse
  * Config Class
  * 
- * @version 1.1.3-xtc3
+ * @copyright (C) 2014-2016 Komfortkasse Team. All rights reserved.
+ * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
+ * @version 1.5.1-virtuemart
  */
+defined('_JEXEC') or die();
 class Komfortkasse_Config {
 	const activate_export = 'KOMFORTKASSE_ACTIVATE_EXPORT';
 	const activate_update = 'KOMFORTKASSE_ACTIVATE_UPDATE';
@@ -70,10 +73,8 @@ class Komfortkasse_Config {
 		}
 	}
 	public static function getRequestParameter($key) {
-		if ($_POST [$key])
-			return urldecode($_POST [$key]);
-		else
-			return urldecode($_GET [$key]);
+		$jinput = JFactory::getApplication()->input;
+		return urldecode($jinput->get($key));
 	}
 	
 	public static function getVersion() {

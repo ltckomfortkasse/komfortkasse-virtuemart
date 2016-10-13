@@ -9,8 +9,11 @@
  * Komfortkasse
  * Config Class
  * 
+ * @copyright (C) 2014-2016 Komfortkasse Team. All rights reserved.
+ * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * @version 1.0.0-xtc3
  */
+defined('_JEXEC') or die();
 class Komfortkasse_Order {
 	
 	// return all order numbers that are "open" and relevant for tranfer to kk
@@ -99,10 +102,10 @@ class Komfortkasse_Order {
 	}
 	public static function getOrder($number) {
 		if (!class_exists('VirtueMartModelOrders')) {
-			require(VMPATH_ADMIN . DS . 'models' . DS . 'orders.php');
+			require(VMPATH_ADMIN . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'orders.php');
 		}
 		if (!class_exists('VirtueMartModelCurrency')) {
-			require(VMPATH_ADMIN . DS . 'models' . DS . 'currency.php');
+			require(VMPATH_ADMIN . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'currency.php');
 		}
 		$q = "SELECT virtuemart_order_id FROM #__virtuemart_orders WHERE order_number = '".$number."'";
 		

@@ -7,24 +7,17 @@
  * @version 1.0.0
  * @package VirtueMart
  * @subpackage payment
- * Copyright (C) 2014-2016 Komfortkasse Team. All rights reserved.
- * @license http://www.gnu.org/copyleft/gpl.html GNU/GPL, see LICENSE.php
- * VirtueMart is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
- * See /administrator/components/com_virtuemart/COPYRIGHT.php for copyright notices and details.
- *
- * http://virtuemart.net
+ * @copyright (C) 2014-2016 Komfortkasse Team. All rights reserved.
+ * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 ini_set ('display_errors', 'Off');
-defined('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die();
 if (!class_exists('vmPSPlugin')) {
-	require(JPATH_VM_PLUGINS . DS . 'vmpsplugin.php');
+	require(JPATH_VM_PLUGINS . DIRECTORY_SEPARATOR . 'vmpsplugin.php');
 }
 
 if (!class_exists('Komfortkasse')) {
-	require(VMPATH_ROOT .DS.'plugins'.DS.'vmpayment'.DS.'komfortkasse'.DS.'komfortkasse'.DS.'helpers'.DS.'Komfortkasse.php');
+	require(VMPATH_ROOT . DIRECTORY_SEPARATOR .'plugins'. DIRECTORY_SEPARATOR .'vmpayment'. DIRECTORY_SEPARATOR .'komfortkasse'. DIRECTORY_SEPARATOR .'komfortkasse'. DIRECTORY_SEPARATOR .'helpers'. DIRECTORY_SEPARATOR .'Komfortkasse.php');
 }
 
 class plgVmPaymentKomfortkasse extends vmPSPlugin {

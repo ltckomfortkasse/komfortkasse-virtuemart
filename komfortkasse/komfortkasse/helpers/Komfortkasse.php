@@ -5,10 +5,13 @@ require_once 'Komfortkasse_Order.php';
 /**
  * Komfortkasse
  * Main Class, multi-shop
+ * @copyright (C) 2014-2016 Komfortkasse Team. All rights reserved.
+ * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
+defined('_JEXEC') or die();
 class Komfortkasse
 {
-    const PLUGIN_VER = '1.5.0';
+    const PLUGIN_VER = '1.5.1';
     const MAXLEN_SSL = 117;
     const LEN_MCRYPT = 16;
 

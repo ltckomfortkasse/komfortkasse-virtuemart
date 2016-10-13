@@ -5,8 +5,8 @@
     <author>Komfortkasse Team</author>
     <authorUrl>http://komfortkasse.eu</authorUrl>
     <copyright>Copyright (C) 2014-2016 Komfortkasse Team. All rights reserved.</copyright>
-    <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-    <version>1.5.0</version>
+    <license>GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html</license>
+    <version>1.5.1</version>
     <description>Automatische Zuordnung von Zahlungen</description>
     <languages>
         <language tag="en-GB">language/en-GB/en-GB.plg_vmpayment_komfortkasse.ini</language>
