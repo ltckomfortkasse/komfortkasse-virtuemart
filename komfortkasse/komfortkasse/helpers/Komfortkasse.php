@@ -11,7 +11,7 @@ require_once 'Komfortkasse_Order.php';
 defined('_JEXEC') or die();
 class Komfortkasse
 {
-    const PLUGIN_VER = '1.5.1';
+    const PLUGIN_VER = '1.5.2';
     const MAXLEN_SSL = 117;
     const LEN_MCRYPT = 16;
 

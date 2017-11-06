@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <extension version="2.5" type="plugin" group="vmpayment" method="upgrade">
     <name>Komfortkasse</name>
-    <creationDate>May 23 2016</creationDate>
+    <creationDate>Nov 16 2017</creationDate>
     <author>Komfortkasse Team</author>
     <authorUrl>http://komfortkasse.eu</authorUrl>
     <copyright>Copyright (C) 2014-2016 Komfortkasse Team. All rights reserved.</copyright>
