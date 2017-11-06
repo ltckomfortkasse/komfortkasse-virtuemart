@@ -11,7 +11,7 @@
  * 
  * @copyright (C) 2014-2016 Komfortkasse Team. All rights reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
- * @version 1.0.0-xtc3
+ * @version 1.5.2-virtuemart
  */
 defined('_JEXEC') or die();
 class Komfortkasse_Order {
@@ -201,7 +201,6 @@ class Komfortkasse_Order {
 	}
 	
 	public static function updateOrder($order, $status, $callbackid) {
-		#xtc_db_query("update ".TABLE_ORDERS." set orders_status = '".xtc_db_input($status)."', last_modified = now() where orders_id = '".xtc_db_input($order['number'])."'");
 		$db = JFactory::getDBO();
 		$q = "UPDATE #__virtuemart_orders SET order_status = '".$status."' WHERE order_number = '".$order['number']."'";
 			try {
@@ -213,7 +212,6 @@ class Komfortkasse_Order {
 			echo 'Error';
 		}
 		
-		#xtc_db_query("insert into ".TABLE_ORDERS_STATUS_HISTORY." (orders_id, orders_status_id, date_added, customer_notified, comments) values ('".xtc_db_input($order['number'])."', '".xtc_db_input($status)."', now(), '0', 'Komfortkasse ID ".$callbackid."')");
 		$q = "INSERT INTO  #__virtuemart_orders (virtuemart_order_id,order_status_code,customer_notified,published) VALUES (".$order['id'].",".$status.",0,1)" ;
 			try {
 			$db = JFactory::getDBO();

@@ -6,7 +6,7 @@
  * 
  * @copyright (C) 2014-2016 Komfortkasse Team. All rights reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
- * @version 1.5.1-virtuemart
+ * @version 1.5.2-virtuemart
  */
 defined('_JEXEC') or die();
 class Komfortkasse_Config {
@@ -78,9 +78,10 @@ class Komfortkasse_Config {
 	}
 	
 	public static function getVersion() {
-		$config_q = xtc_db_query("SELECT version FROM database_version");
-		$config_a = xtc_db_fetch_array($config_q);
-		return $config_a ['version'];
+		return '0.0'; // TODO
+		// $config_q = xtc_db_query("SELECT version FROM database_version");
+		// $config_a = xtc_db_fetch_array($config_q);
+		// return $config_a ['version'];
 	}
 }
 ?>
