@@ -64,17 +64,27 @@ class plgVmPaymentKomfortkasse extends vmPSPlugin {
 		
 		$this->setConfigParameterable($this->_configTableFieldName, $varsToPush);
 		
+		// Only Komfortkasse's own calls (index.php?option=com_virtuemart&view=cart&type=vmpayment&name=komfortkasse&action=...)
+		// with one of its actions. Requests of other extensions that happen to have an "action"
+		// parameter must not be touched.
 		$action = vRequest::getCmd('action');
 
-		if($action != ''){
+		if(self::isKomfortkasseAction($action) && vRequest::getCmd('name') === 'komfortkasse'){
 			$this->kk();
 		}
 	}
-	
+
+	// actions Komfortkasse calls on a VirtueMart shop; never dispatch to arbitrary public methods
+	private static function isKomfortkasseAction($action) {
+		return is_string($action) && in_array($action, array('init', 'test', 'readorders', 'updateorders', 'info'), true);
+	}
+
 	public function kk(){
 		$action = Komfortkasse_Config::getRequestParameter('action');
+		if (!self::isKomfortkasseAction($action)) {
+			return;
+		}
 
-		
 		$kk = new Komfortkasse();
 		$kk->$action();
 		

@@ -6,7 +6,7 @@
  * 
  * @copyright (C) 2014-2016 Komfortkasse Team. All rights reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
- * @version 1.5.2-virtuemart
+ * @version 1.5.3-virtuemart
  */
 defined('_JEXEC') or die();
 class Komfortkasse_Config {
@@ -35,19 +35,20 @@ class Komfortkasse_Config {
 		$db = JFactory::getDBO();
 		$db->setQuery($q);
 		$params = $db->loadResult();
-		$payment_params = explode("|", $params);
+		$payment_params = explode("|", (string) $params);
 
 		$params = '';
 		for ($i = 0; $i < count($payment_params)-1; ++$i) {
-			
-			$pos = strpos($payment_params[$i], $constant_key);
-			if ($pos !== false) {
-				$payment_params[$i] = $constant_key.'="'.$value.'"';
+
+			$param = explode('=', $payment_params[$i], 2);
+			if ($param[0] === $constant_key) {
+				// same format as VirtueMart (VmTable): key=json_encode(value)|
+				$payment_params[$i] = $constant_key.'='.json_encode((string) $value);
 			}
 			$params .= $payment_params[$i].'|';
 		}
 
-		$q = "UPDATE #__virtuemart_paymentmethods SET payment_params = '". $params."' WHERE payment_element LIKE 'komfortkasse'" ;
+		$q = "UPDATE #__virtuemart_paymentmethods SET payment_params = ". $db->quote($params) ." WHERE payment_element LIKE 'komfortkasse'" ;
 		$db->setQuery($q);
 		$db->loadResult();
 
@@ -58,23 +59,37 @@ class Komfortkasse_Config {
 		$db->setQuery($q);
 		$params = $db->loadResult();
 
-		$payment_params = explode("|", $params);
+		$payment_params = explode("|", (string) $params);
 
 		foreach ($payment_params as $payment_param) {
 			if (empty($payment_param)) {
 				continue;
 			}
-			$param = explode('=', $payment_param);
-			$payment_params[$param[0]] = substr($param[1], 1, -1);
-			if ($param[0] == $constant_key){
-				return $payment_params[$param[0]];
+			// VirtueMart stores key=json_encode(value)|: split at the first '=' only (base64 keys
+			// contain '='), decode JSON (escaped "\/", arrays of a multiple select field)
+			$param = explode('=', $payment_param, 2);
+			if ($param[0] != $constant_key || !isset($param[1])) {
+				continue;
 			}
-		
+			$value = json_decode($param[1]);
+			if ($value === null && $param[1] !== 'null') {
+				// not JSON: old behaviour (strip the surrounding quotes)
+				return substr($param[1], 1, -1);
+			}
+			if (is_array($value)) {
+				return implode(',', $value);
+			}
+			return is_scalar($value) ? (string) $value : '';
 		}
+		return null;
 	}
 	public static function getRequestParameter($key) {
 		$jinput = JFactory::getApplication()->input;
-		return urldecode($jinput->get($key));
+		// 'raw': the default filter 'cmd' strips '+', '/' and '=' and breaks base64/openssl data
+		$value = $jinput->get($key, null, 'raw');
+		if (!is_string($value))
+			return '';
+		return urldecode($value);
 	}
 	
 	public static function getVersion() {

@@ -11,10 +11,39 @@
  * 
  * @copyright (C) 2014-2016 Komfortkasse Team. All rights reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
- * @version 1.5.2-virtuemart
+ * @version 1.5.3-virtuemart
  */
 defined('_JEXEC') or die();
 class Komfortkasse_Order {
+
+	// comma separated config value -> trimmed, non-empty parts
+	private static function csvParts($csv) {
+		$parts = array ();
+		foreach (explode(',', str_replace('"', '', (string) $csv)) as $part) {
+			$part = trim($part);
+			if ($part !== '') {
+				$parts [] = $part;
+			}
+		}
+		return $parts;
+	}
+
+	// "order_status in ('P','U') and (virtuemart_paymentmethod_id = 1 or ...)" for the open orders of one payment type
+	private static function openWhere($statusCsv, $paymentCsv) {
+		$db = JFactory::getDBO();
+		$states = array ();
+		foreach (self::csvParts($statusCsv) as $state) {
+			$states [] = $db->quote($state);
+		}
+		$ids = array ();
+		foreach (self::csvParts($paymentCsv) as $id) {
+			$ids [] = "virtuemart_paymentmethod_id = " . (int) $id;
+		}
+		if (empty($states) || empty($ids)) {
+			return null;
+		}
+		return "order_status in (" . implode(',', $states) . ") and ( " . implode(' or ', $ids) . " )";
+	}
 	
 	// return all order numbers that are "open" and relevant for tranfer to kk
 	public static function getOpenIDs() {
@@ -22,16 +51,12 @@ class Komfortkasse_Order {
 		$ret = array ();
 		
         if (Komfortkasse_Config::getConfig(Komfortkasse_Config::status_open) != '' && Komfortkasse_Config::getConfig(Komfortkasse_Config::payment_methods) != '') {
-        	
-        	$sql = "select order_number from #__virtuemart_orders where order_status like '" . Komfortkasse_Config::getConfig(Komfortkasse_Config::status_open) . "' and ( ";
-        	$paycodes = preg_split('/,/', str_replace('"', '', Komfortkasse_Config::getConfig(Komfortkasse_Config::payment_methods)));
-            for($i = 0; $i < count($paycodes); $i++) {
-                $sql .= " virtuemart_paymentmethod_id = " . $paycodes[$i] . " ";
-                if ($i < count($paycodes) - 1) {
-                    $sql .= " or ";
-                }
-            }
-            $sql .= " )";
+        	$where = self::openWhere(Komfortkasse_Config::getConfig(Komfortkasse_Config::status_open), Komfortkasse_Config::getConfig(Komfortkasse_Config::payment_methods));
+        	if ($where === null) {
+        		$where = '0';
+        	}
+        	$sql = "select order_number from #__virtuemart_orders where " . $where;
+        	$oid = array ();
 			try{
 	            $db = JFactory::getDBO();
 	            $db->setQuery($sql);
@@ -47,16 +72,12 @@ class Komfortkasse_Order {
         }
 
         if (Komfortkasse_Config::getConfig(Komfortkasse_Config::status_open_invoice) != '' && Komfortkasse_Config::getConfig(Komfortkasse_Config::payment_methods_invoice) != '') {
-        	$sql = "select order_number from #__virtuemart_orders where order_status like '" . Komfortkasse_Config::getConfig(Komfortkasse_Config::status_open_invoice) . "' and ( ";
-        	$paycodes = preg_split('/,/', str_replace('"', '', Komfortkasse_Config::getConfig(Komfortkasse_Config::payment_methods_invoice)));
-            for($i = 0; $i < count($paycodes); $i++) {
-                $sql .= " virtuemart_paymentmethod_id = " . $paycodes[$i] . " ";
-                if ($i < count($paycodes) - 1) {
-                    $sql .= " or ";
-                }
-            }
-            
-            $sql .= " )";
+        	$where = self::openWhere(Komfortkasse_Config::getConfig(Komfortkasse_Config::status_open_invoice), Komfortkasse_Config::getConfig(Komfortkasse_Config::payment_methods_invoice));
+        	if ($where === null) {
+        		$where = '0';
+        	}
+        	$sql = "select order_number from #__virtuemart_orders where " . $where;
+        	$oid = array ();
             try{
 	            $db = JFactory::getDBO();
 	            $db->setQuery($sql);
@@ -71,16 +92,12 @@ class Komfortkasse_Order {
         }
         
         if (Komfortkasse_Config::getConfig(Komfortkasse_Config::status_open_cod) != '' && Komfortkasse_Config::getConfig(Komfortkasse_Config::payment_methods_cod) != '') {
-
-        	$sql = "select order_number from #__virtuemart_orders where order_status like '" . Komfortkasse_Config::getConfig(Komfortkasse_Config::status_open_cod) . "' and ( ";
-        	$paycodes = preg_split('/,/', str_replace('"', '', Komfortkasse_Config::getConfig(Komfortkasse_Config::payment_methods_cod)));
-            for($i = 0; $i < count($paycodes); $i++) {
-                $sql .= " virtuemart_paymentmethod_id = " . $paycodes[$i] . " ";
-                if ($i < count($paycodes) - 1) {
-                    $sql .= " or ";
-                }
-            }
-            $sql .= " )";
+        	$where = self::openWhere(Komfortkasse_Config::getConfig(Komfortkasse_Config::status_open_cod), Komfortkasse_Config::getConfig(Komfortkasse_Config::payment_methods_cod));
+        	if ($where === null) {
+        		$where = '0';
+        	}
+        	$sql = "select order_number from #__virtuemart_orders where " . $where;
+        	$oid = array ();
 
 			try{
 	            $db = JFactory::getDBO();
@@ -107,7 +124,12 @@ class Komfortkasse_Order {
 		if (!class_exists('VirtueMartModelCurrency')) {
 			require(VMPATH_ADMIN . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'currency.php');
 		}
-		$q = "SELECT virtuemart_order_id FROM #__virtuemart_orders WHERE order_number = '".$number."'";
+		$number = trim((string) $number);
+		if ($number === '') {
+			return null;
+		}
+		$db = JFactory::getDBO();
+		$q = "SELECT virtuemart_order_id FROM #__virtuemart_orders WHERE order_number = " . $db->quote($number);
 		
 		try {
 			$db = JFactory::getDBO();
@@ -118,16 +140,20 @@ class Komfortkasse_Order {
 			#echo 'Error';
 		}
 		
-		$order = new VirtueMartModelOrders;
-		$orderdetails = $order->getOrder($oid);
+		if (empty ( $oid )) {
+			return null;
+		}
 
-		if (empty ( $number ) || empty ( $order )) {
+		$order = new VirtueMartModelOrders;
+		$orderdetails = $order->getOrder((int) $oid);
+
+		if (empty ( $orderdetails ) || empty ( $orderdetails['details']['BT'] )) {
 			return null;
 		}
 
 
 		
-		$q = "SELECT currency_code_3,currency_exchange_rate FROM #__virtuemart_currencies WHERE virtuemart_currency_id = ".$orderdetails['details']['BT']->order_currency;
+		$q = "SELECT currency_code_3,currency_exchange_rate FROM #__virtuemart_currencies WHERE virtuemart_currency_id = ".(int) $orderdetails['details']['BT']->order_currency;
 		
 		try {
 			$db = JFactory::getDBO();
@@ -138,7 +164,7 @@ class Komfortkasse_Order {
 			#echo "Error";
 		}
 		
-		$q = "SELECT country_2_code FROM #__virtuemart_countries WHERE virtuemart_country_id = ".$orderdetails['details']['ST']->virtuemart_country_id;
+		$q = "SELECT country_2_code FROM #__virtuemart_countries WHERE virtuemart_country_id = ".(int) $orderdetails['details']['ST']->virtuemart_country_id;
 		
 		try {
 			$db = JFactory::getDBO();
@@ -149,7 +175,7 @@ class Komfortkasse_Order {
 			#echo 'Error';
 		}
 		
-		$q = "SELECT country_2_code FROM #__virtuemart_countries WHERE virtuemart_country_id = ".$orderdetails['details']['BT']->virtuemart_country_id;
+		$q = "SELECT country_2_code FROM #__virtuemart_countries WHERE virtuemart_country_id = ".(int) $orderdetails['details']['BT']->virtuemart_country_id;
 		
 		try {
 			$db = JFactory::getDBO();
@@ -190,10 +216,13 @@ class Komfortkasse_Order {
         $ret ['billing_countrycode'] = $billingcountry;
         $ret ['status'] = $orderdetails['details']['BT']->order_status;
 
-		for( $i= 0 ; $i < count($orderdetails['items']) ; $i++ ){
-			$ret['products'][] = $orderdetails['items'][$i]->order_item_sku ;
-			if($orderdetails['items'][$i]->order_item_sku = ''){
-				$ret['products'][] = $orderdetails['items'][$i]->order_item_name;
+		$items = isset($orderdetails['items']) ? $orderdetails['items'] : array ();
+		for( $i= 0 ; $i < count($items) ; $i++ ){
+			// article number, otherwise the article name (was an assignment instead of a comparison)
+			if ($items[$i]->order_item_sku != '') {
+				$ret['products'][] = $items[$i]->order_item_sku;
+			} else {
+				$ret['products'][] = $items[$i]->order_item_name;
 			}
 		}
 
@@ -202,7 +231,7 @@ class Komfortkasse_Order {
 	
 	public static function updateOrder($order, $status, $callbackid) {
 		$db = JFactory::getDBO();
-		$q = "UPDATE #__virtuemart_orders SET order_status = '".$status."' WHERE order_number = '".$order['number']."'";
+		$q = "UPDATE #__virtuemart_orders SET order_status = " . $db->quote($status) . " WHERE order_number = " . $db->quote($order['number']);
 			try {
 			$db = JFactory::getDBO();
 			$db->setQuery($q);
@@ -212,7 +241,9 @@ class Komfortkasse_Order {
 			echo 'Error';
 		}
 		
-		$q = "INSERT INTO  #__virtuemart_orders (virtuemart_order_id,order_status_code,customer_notified,published) VALUES (".$order['id'].",".$status.",0,1)" ;
+		// order history entry (before: wrong table and unquoted status, so the insert always failed)
+		$q = "INSERT INTO #__virtuemart_order_histories (virtuemart_order_id,order_status_code,customer_notified,comments,published,created_on) VALUES ("
+			. (int) $order['id'] . "," . $db->quote($status) . ",0," . $db->quote('Komfortkasse ID ' . $callbackid) . ",1," . $db->quote(gmdate('Y-m-d H:i:s')) . ")";
 			try {
 			$db = JFactory::getDBO();
 			$db->setQuery($q);
